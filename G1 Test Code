@@ -1,0 +1,289 @@
+// Yara Eslampourmaraghi
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+
+    // user input
+    static Scanner input = new Scanner(System.in);
+
+    // admin password
+    static final String ADMIN_PASSWORD = "yarapassword";
+
+    // question banks for part a and part b
+    static ArrayList<String> partAQuestions = new ArrayList<>();
+    static ArrayList<String> partAOptions = new ArrayList<>();
+    static ArrayList<Character> partAAnswers = new ArrayList<>();
+
+    static ArrayList<String> partBQuestions = new ArrayList<>();
+    static ArrayList<String> partBOptions = new ArrayList<>();
+    static ArrayList<Character> partBAnswers = new ArrayList<>();
+
+    public static void main(String[] args) {
+
+        // load default questions
+        loadQuestions();
+
+        // greeting
+        System.out.println("=====================================");
+        System.out.println(" Welcome to the Ontario G1 Practice Test ");
+        System.out.println("=====================================");
+
+        // display main menu
+        System.out.println("1. Write a G1 Test");
+        System.out.println("2. Login as Admin");
+        System.out.print("Enter your choice: ");
+
+        int choice = getIntInput();
+
+        if (choice == 1) {
+            writeTest();
+        } else if (choice == 2) {
+            adminLogin();
+        } else {
+            System.out.println("Invalid choice. Program exiting.");
+        }
+    }
+
+    // test
+    public static void writeTest() {
+
+        int scoreA = runSection(partAQuestions, partAOptions, partAAnswers, "Part A");
+        if (scoreA < 0) return; // early termination
+
+        int scoreB = runSection(partBQuestions, partBOptions, partBAnswers, "Part B");
+        if (scoreB < 0) return;
+
+        int totalScore = scoreA + scoreB;
+
+        System.out.println("\n========== RESULTS ==========");
+        System.out.println("Part A Score: " + scoreA + "/6");
+        System.out.println("Part B Score: " + scoreB + "/6");
+        System.out.println("Final Score: " + totalScore + "/12");
+
+        if (totalScore >= 9 && scoreA >= 4 && scoreB >= 4) {
+            System.out.println("Status: PASS");
+        } else {
+            System.out.println("Status: FAIL");
+        }
+    }
+
+    // run one section of the test
+    public static int runSection(ArrayList<String> questions,
+                                 ArrayList<String> options,
+                                 ArrayList<Character> answers,
+                                 String sectionName) {
+
+        System.out.println("\n--- " + sectionName + " ---");
+
+        Random rand = new Random();
+        ArrayList<Integer> usedIndexes = new ArrayList<>();
+
+        int score = 0;
+        int asked = 0;
+
+        while (asked < 6) {
+
+            // early termination check
+            if ((6 - asked + score) < 4) {
+                System.out.println("You can no longer pass this section. Test terminated.");
+                return -1;
+            }
+
+            int index = rand.nextInt(questions.size());
+
+            // prevent repetitive questions
+            if (usedIndexes.contains(index)) {
+                continue;
+            }
+
+            usedIndexes.add(index);
+            asked++;
+
+            // display question and options
+            System.out.println("\nQuestion " + asked + ":");
+            System.out.println(questions.get(index));
+            System.out.println(options.get(index));
+            System.out.print("Your answer (A/B/C/D): ");
+
+            char userAnswer = getCharInput();
+
+            // check answer
+            if (userAnswer == answers.get(index)) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect!");
+            }
+        }
+
+        return score;
+    }
+
+    // admin section
+    public static void adminLogin() {
+        System.out.print("Enter admin password: ");
+        String password = input.nextLine();
+
+        if (!password.equals(ADMIN_PASSWORD)) {
+            System.out.println("Incorrect password.");
+            return;
+        }
+
+        System.out.println("\nAdmin Menu");
+        System.out.println("1. Add a question");
+        System.out.println("2. Remove a question");
+        System.out.print("Enter choice: ");
+
+        int choice = getIntInput();
+
+        if (choice == 1) {
+            addQuestion();
+        } else if (choice == 2) {
+            removeQuestion();
+        } else {
+            System.out.println("Invalid choice.");
+        }
+    }
+
+    // add question to part a only
+    public static void addQuestion() {
+        System.out.print("Enter question: ");
+        String q = input.nextLine();
+
+        System.out.println("Enter options (A-D) on one line:");
+        String o = input.nextLine();
+
+        System.out.print("Enter correct answer (A/B/C/D): ");
+        char a = getCharInput();
+
+        partAQuestions.add(q);
+        partAOptions.add(o);
+        partAAnswers.add(a);
+
+        System.out.println("Question added to Part A.");
+    }
+
+    // remove last question from a
+    public static void removeQuestion() {
+        if (partAQuestions.size() > 0) {
+            int last = partAQuestions.size() - 1;
+            partAQuestions.remove(last);
+            partAOptions.remove(last);
+            partAAnswers.remove(last);
+            System.out.println("Last question removed from Part A.");
+        } else {
+            System.out.println("No questions to remove.");
+        }
+    }
+
+    // inputs
+    public static int getIntInput() {
+        while (true) {
+            try {
+                int value = Integer.parseInt(input.nextLine());
+                return value;
+            } catch (Exception e) {
+                System.out.print("Enter a valid number: ");
+            }
+        }
+    }
+
+    public static char getCharInput() {
+        while (true) {
+            String s = input.nextLine().toUpperCase();
+            if (s.length() == 1 && "ABCD".contains(s)) {
+                return s.charAt(0);
+            }
+            System.out.print("Enter A, B, C, or D: ");
+        }
+    }
+
+    // questions
+    public static void loadQuestions() {
+
+        // PART A (10 questions)
+        partAQuestions.add("What does a red traffic light mean?");
+        partAOptions.add("A) Stop\nB) Slow down\nC) Go\nD) Yield");
+        partAAnswers.add('A');
+
+        partAQuestions.add("What does a flashing green light mean in Ontario?");
+        partAOptions.add("A) Stop\nB) Advance turn allowed\nC) Pedestrian crossing\nD) Yield");
+        partAAnswers.add('B');
+
+        partAQuestions.add("When must you yield to pedestrians?");
+        partAOptions.add("A) Never\nB) Only at night\nC) At crosswalks\nD) Only in school zones");
+        partAAnswers.add('C');
+
+        partAQuestions.add("What sign means 'Stop'?");
+        partAOptions.add("A) Triangle\nB) Circle\nC) Octagon\nD) Diamond");
+        partAAnswers.add('C');
+
+        partAQuestions.add("What does a yellow light mean?");
+        partAOptions.add("A) Stop immediately\nB) Speed up\nC) Prepare to stop\nD) Yield");
+        partAAnswers.add('C');
+
+        partAQuestions.add("What does a green light mean?");
+        partAOptions.add("A) Go if clear\nB) Stop\nC) Yield\nD) Slow");
+        partAAnswers.add('A');
+
+        partAQuestions.add("What does a yield sign mean?");
+        partAOptions.add("A) Stop\nB) Give right of way\nC) Speed up\nD) Turn");
+        partAAnswers.add('B');
+
+        partAQuestions.add("Who has right of way at a 4-way stop?");
+        partAOptions.add("A) First vehicle\nB) Last vehicle\nC) Fastest\nD) Largest");
+        partAAnswers.add('A');
+
+        partAQuestions.add("What does a school zone sign indicate?");
+        partAOptions.add("A) Hospital\nB) Playground\nC) Reduced speed\nD) Highway");
+        partAAnswers.add('C');
+
+        partAQuestions.add("What shape is a warning sign?");
+        partAOptions.add("A) Circle\nB) Diamond\nC) Square\nD) Triangle");
+        partAAnswers.add('B');
+
+        // PART B (10 questions)
+        partBQuestions.add("What is the legal blood alcohol level for G1 drivers?");
+        partBOptions.add("A) 0.08\nB) 0.05\nC) 0.00\nD) 0.02");
+        partBAnswers.add('C');
+
+        partBQuestions.add("What should you do when approaching a railway crossing?");
+        partBOptions.add("A) Speed up\nB) Stop if train is coming\nC) Ignore signs\nD) Honk");
+        partBAnswers.add('B');
+
+        partBQuestions.add("When should headlights be used?");
+        partBOptions.add("A) Night only\nB) Bad weather\nC) Sunset to sunrise\nD) All of the above");
+        partBAnswers.add('D');
+
+        partBQuestions.add("What is the purpose of ABS brakes?");
+        partBOptions.add("A) Stop faster\nB) Prevent skidding\nC) Turn better\nD) Speed");
+        partBAnswers.add('B');
+
+        partBQuestions.add("What should you do if your brakes fail?");
+        partBOptions.add("A) Panic\nB) Shift to lower gear\nC) Speed up\nD) Turn engine off");
+        partBAnswers.add('B');
+
+        partBQuestions.add("What is tailgating?");
+        partBOptions.add("A) Following too closely\nB) Parking\nC) Speeding\nD) Turning");
+        partBAnswers.add('A');
+
+        partBQuestions.add("When can you pass on the right?");
+        partBOptions.add("A) Never\nB) On one-way roads\nC) Anytime\nD) At intersections");
+        partBAnswers.add('B');
+
+        partBQuestions.add("What should you do at a stop sign?");
+        partBOptions.add("A) Slow\nB) Stop fully\nC) Yield\nD) Honk");
+        partBAnswers.add('B');
+
+        partBQuestions.add("What does a solid white line mean?");
+        partBOptions.add("A) Passing allowed\nB) Lane separation\nC) Stop\nD) Yield");
+        partBAnswers.add('B');
+
+        partBQuestions.add("What should you do in fog?");
+        partBOptions.add("A) High beams\nB) Low beams\nC) Speed up\nD) Turn lights off");
+        partBAnswers.add('B');
+    }
+}
