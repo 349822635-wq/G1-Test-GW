@@ -36,6 +36,7 @@ does not appear twice.
 Program Structure
 
 Main Menu
+
 When the program starts, a menu is shown that lets the user either write
 the G1 test or log in as an admin.
 
