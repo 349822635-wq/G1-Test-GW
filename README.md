@@ -40,6 +40,7 @@ When the program starts, a menu is shown that lets the user either write
 the G1 test or log in as an admin.
 
 Test Mode
+
 The test is split into two parts.
 Six questions are randomly selected for each part.
 After each question, the program tells the user if their answer was correct
@@ -47,14 +48,17 @@ or incorrect.
 If the user can no longer pass a section, the test ends early.
 
 Admin Mode
+
 The admin must enter a password.
 Once logged in, the admin can add or remove questions from the question bank.
 
 Input Validation
+
 The program checks user input to make sure numbers and letters are entered
 correctly so the program does not crash.
 
 
 Conclusion
+
 This program uses concepts learned in Grade 11 computer science and follows
 the project requirements.
