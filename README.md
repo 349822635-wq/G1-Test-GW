@@ -60,5 +60,5 @@ correctly so the program does not crash.
 
 Conclusion
 
-This program uses concepts learned in Grade 11 computer science and follows
+This program uses concepts I learned in Grade 11 computer science and follows
 the project requirements.
